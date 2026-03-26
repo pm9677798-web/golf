@@ -1,0 +1,66 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { supabaseAdmin } from '../../../../lib/supabase'
+import { verifyPassword, generateToken } from '../../../../lib/auth'
+
+export async function POST(request: NextRequest) {
+  try {
+    const { email, password } = await request.json()
+
+    // --- TEMPORARY EMERGENCY BYPASS FOR ADMIN ---
+    if (email === 'admin@golfheart.com' && password === 'admin123') {
+       console.log('Emergency Admin Bypass Activated')
+       const token = generateToken({
+         userId: 'admin-bypass',
+         email: 'admin@golfheart.com',
+         subscriptionStatus: 'active'
+       })
+       return NextResponse.json({
+         message: 'Login successful (Bypassed)',
+         token,
+         isAdmin: true,
+         user: { id: 'admin-bypass', email: 'admin@golfheart.com', firstName: 'Admin', lastName: 'User', subscriptionStatus: 'active' }
+       })
+    }
+    // --------------------------------------------
+
+    const { data: userRow, error: userError } = await (supabaseAdmin
+      .from('users') as any)
+      .select('*')
+      .eq('email', email)
+      .single()
+
+    if (userError || !userRow) {
+      return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 })
+    }
+
+    const isValidPassword = await verifyPassword(password, userRow.password_hash)
+    if (!isValidPassword) {
+      return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 })
+    }
+
+    const token = generateToken({
+      userId: userRow.id,
+      email: userRow.email,
+      subscriptionStatus: userRow.subscription_status
+    })
+
+    return NextResponse.json({
+      message: 'Login successful',
+      token,
+      isAdmin: userRow.email === 'admin@golfheart.com',
+      user: {
+        id: userRow.id,
+        email: userRow.email,
+        firstName: userRow.first_name,
+        lastName: userRow.last_name,
+        profileImageUrl: userRow.profile_image_url,
+        subscriptionStatus: userRow.subscription_status,
+        subscriptionPlan: userRow.subscription_plan
+      }
+    })
+
+  } catch (error) {
+    console.error('Login error:', error)
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
+  }
+}

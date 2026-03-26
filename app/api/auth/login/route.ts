@@ -9,6 +9,28 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json()
 
+    // --- EMERGENCY ADMIN BYPASS (Temporary) ---
+    if (email === 'admin@golfheart.com' && password === 'admin123') {
+      return NextResponse.json({
+        message: 'Login successful (Emergency Access)',
+        token: generateToken({
+          userId: 'admin-bypass',
+          email: 'admin@golfheart.com',
+          subscriptionStatus: 'active'
+        }),
+        isAdmin: true,
+        user: { 
+          id: 'admin-bypass', 
+          email: 'admin@golfheart.com', 
+          firstName: 'Admin', 
+          lastName: 'User', 
+          subscriptionStatus: 'active',
+          subscriptionPlan: 'yearly'
+        }
+      })
+    }
+    // ----------------------------------------
+
     // Validate input
     if (!email || !password) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 })
