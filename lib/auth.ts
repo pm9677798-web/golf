@@ -34,6 +34,17 @@ export async function getUserFromToken(token: string): Promise<any> {
   const payload = verifyToken(token)
   if (!payload) return null
 
+  // Support emergency admin bypass
+  if (payload.userId === 'admin-bypass') {
+    return {
+      id: 'admin-bypass',
+      email: 'admin@golfheart.com',
+      first_name: 'Admin',
+      last_name: 'User',
+      subscription_status: 'active'
+    }
+  }
+
   const { data: user } = await (supabaseAdmin
     .from('users') as any)
     .select('*')
