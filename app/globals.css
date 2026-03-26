@@ -1,0 +1,203 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply min-h-screen text-slate-800;
+    /* Global website background - animated gradient */
+    background: linear-gradient(-45deg, #f8fafc, #e2e8f0, #f1f5f9, #e7e5e4);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+  
+  /* Performance optimizations */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  button, a {
+    touch-action: manipulation;
+  }
+}
+
+/* Global background animation */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@layer components {
+  /* 3D Button Primary */
+  .btn-primary {
+    @apply bg-primary-500 text-white font-bold py-3 px-6 rounded-xl transition-all duration-150 transform block text-center;
+    box-shadow: 0 6px 0 0 #059669, 0 8px 15px -3px rgba(16, 185, 129, 0.4);
+    will-change: transform, box-shadow;
+  }
+  .btn-primary:active {
+    @apply transform translate-y-2;
+    box-shadow: 0 0px 0 0 #059669, 0 2px 4px -2px rgba(16, 185, 129, 0.4);
+    margin-bottom: -8px; /* Offset the 6px reduction in box-shadow + 2px transform to maintain layout */
+  }
+
+  /* 3D Button Secondary */
+  .btn-secondary {
+    @apply bg-white text-slate-700 font-bold py-3 px-6 rounded-xl border-2 border-slate-200 transition-all duration-150 transform block text-center;
+    box-shadow: 0 6px 0 0 #e2e8f0, 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+    will-change: transform, box-shadow;
+  }
+  .btn-secondary:active {
+    @apply transform translate-y-2;
+    box-shadow: 0 0px 0 0 #e2e8f0, 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    margin-bottom: -8px;
+  }
+
+  /* 3D Card */
+  .card {
+    @apply bg-white rounded-2xl transition-all duration-300 transform border-2 border-slate-100;
+    box-shadow: 0 8px 0 0 #f1f5f9, 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+    background-image: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  }
+  .card:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 12px 0 0 #f1f5f9, 0 15px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-0 focus:border-primary-500 transition-all duration-150 bg-slate-50 focus:bg-white;
+    box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.05);
+  }
+  
+  .charity-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-charity-500 to-charity-600;
+  }
+  .charity-bg-gradient {
+    @apply bg-gradient-to-r from-charity-500 to-charity-600;
+  }
+  
+  .prize-gradient {
+    @apply bg-gradient-to-r from-yellow-400 to-orange-500;
+  }
+  
+  /* Fast click response */
+  .fast-click {
+    @apply transform active:scale-95 transition-transform duration-75;
+  }
+}
+
+/* Optimized transitions */
+.page-transition {
+  @apply transition-all duration-200 ease-out;
+}
+
+/* Base custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full border-2 border-slate-100;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
+
+/* Hero Background Animations */
+@keyframes hero-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hero-background-transition {
+  transition: background-image 0.1s ease-out;
+  will-change: background-image;
+}
+
+/* Glass morphism effects for hero */
+.glass-hero {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Performance optimizations for scroll animations */
+.scroll-optimized {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Smooth background transitions */
+.bg-smooth-transition {
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* Improved Typography - Lighter headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600 !important; /* Reduced from 700-900 to 600 */
+  line-height: 1.2 !important; /* Reduced line height */
+  letter-spacing: -0.025em;
+}
+
+h1 { font-size: 2.5rem !important; } /* Reduced from larger sizes */
+h2 { font-size: 2rem !important; }
+h3 { font-size: 1.5rem !important; }
+h4 { font-size: 1.25rem !important; }
+
+/* Hover effects for interactive elements */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Image containers - no background */
+.image-container, .profile-image, .charity-image, .hero-image {
+  background: transparent !important;
+}
+
+/* Cards and content areas - subtle background */
+.content-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Loading animations */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
+/* Button hover colors */
+.btn-primary:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 8px 25px -5px rgba(16, 185, 129, 0.4);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #10b981;
+  color: #059669;
+}
