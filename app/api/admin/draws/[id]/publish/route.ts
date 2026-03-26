@@ -22,11 +22,11 @@ export async function PATCH(
     // Update draw to published status with proper error handling
     try {
       const updateResult = await (supabaseAdmin
-        .from('draws')
+        .from('draws') as any)
         .update({ is_published: true } as any)
         .eq('id', drawId)
         .select()
-        .single() as any)
+        .single()
 
       const draw = updateResult.data
 

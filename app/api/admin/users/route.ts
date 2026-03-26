@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all users with their scores count
-    const { data: users, error } = await supabaseAdmin
-      .from('users')
+    const { data: users, error } = await (supabaseAdmin
+      .from('users') as any)
       .select(`
         *,
         scores:golf_scores(count)
@@ -55,8 +55,8 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await hashPassword(tempPassword)
 
     // Create new user
-    const { data: newUser, error } = await supabaseAdmin
-      .from('users')
+    const { data: newUser, error } = await (supabaseAdmin
+      .from('users') as any)
       .insert({
         email,
         first_name: firstName,

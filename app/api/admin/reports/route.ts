@@ -23,40 +23,40 @@ export async function GET(request: NextRequest) {
       scoresResult
     ] = await Promise.all([
       // User statistics
-      supabaseAdmin
-        .from('users')
+      (supabaseAdmin
+        .from('users') as any)
         .select('subscription_status, subscription_plan, created_at')
         .order('created_at', { ascending: false }),
       
       // Draw statistics
-      supabaseAdmin
-        .from('draws')
+      (supabaseAdmin
+        .from('draws') as any)
         .select('total_prize_pool, created_at, is_published')
         .order('created_at', { ascending: false }),
       
       // Winner statistics
-      supabaseAdmin
-        .from('winners')
+      (supabaseAdmin
+        .from('winners') as any)
         .select('prize_amount, verification_status, payment_status, created_at')
         .order('created_at', { ascending: false }),
       
       // Charity contributions
-      supabaseAdmin
-        .from('charity_contributions')
+      (supabaseAdmin
+        .from('charity_contributions') as any)
         .select('amount, created_at'),
       
       // Score statistics
-      supabaseAdmin
-        .from('golf_scores')
+      (supabaseAdmin
+        .from('golf_scores') as any)
         .select('score, created_at')
         .order('created_at', { ascending: false })
     ])
 
-    const users = usersResult.data || []
-    const draws = drawsResult.data || []
-    const winners = winnersResult.data || []
-    const charityContributions = charitiesResult.data || []
-    const scores = scoresResult.data || []
+    const users = (usersResult.data as any[]) || []
+    const draws = (drawsResult.data as any[]) || []
+    const winners = (winnersResult.data as any[]) || []
+    const charityContributions = (charitiesResult.data as any[]) || []
+    const scores = (scoresResult.data as any[]) || []
 
     // Calculate statistics
     const totalUsers = users.length

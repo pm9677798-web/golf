@@ -25,8 +25,8 @@ export async function PATCH(
     }
 
     // Update winner verification status
-    const { data: winner, error } = await supabaseAdmin
-      .from('winners')
+    const { data: winner, error } = await (supabaseAdmin
+      .from('winners') as any)
       .update({
         verification_status: status,
         updated_at: new Date().toISOString()

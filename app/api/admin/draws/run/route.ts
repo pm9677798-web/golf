@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     // Final mode - save to database
     const { data: draw, error: drawError } = await (supabaseAdmin
-      .from('draws')
+      .from('draws') as any)
       .insert({
         draw_date: new Date().toISOString().split('T')[0],
         draw_type: type,
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
         is_published: false // Admin needs to publish manually
       })
       .select()
-      .single() as any)
+      .single()
 
     if (drawError || !draw) {
       return NextResponse.json({ message: 'Failed to create draw' }, { status: 500 })
@@ -72,8 +72,8 @@ export async function POST(request: NextRequest) {
       console.log('=== STARTING WINNER PROCESSING ===')
       
       // Get all active users
-      const { data: activeUsers, error: usersError } = await supabaseAdmin
-        .from('users')
+      const { data: activeUsers, error: usersError } = await (supabaseAdmin
+        .from('users') as any)
         .select('id, first_name, last_name, email')
         .eq('subscription_status', 'active')
 
@@ -100,8 +100,8 @@ export async function POST(request: NextRequest) {
         console.log(`\n--- Processing user: ${user.first_name} (${user.email}) ---`)
         
         // Get user's latest 5 scores
-        const { data: userScores, error: scoresError } = await supabaseAdmin
-          .from('golf_scores')
+        const { data: userScores, error: scoresError } = await (supabaseAdmin
+          .from('golf_scores') as any)
           .select('score, score_date')
           .eq('user_id', user.id)
           .order('score_date', { ascending: false })
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
           
           // Create draw entry first
           const { data: entryData, error: entryError } = await (supabaseAdmin
-            .from('draw_entries')
+            .from('draw_entries') as any)
             .insert({
               user_id: user.id,
               draw_id: draw.id,
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
               prize_amount: 0 // Will be calculated later
             })
             .select()
-            .single() as any)
+            .single()
 
           if (entryError) {
             console.error(`❌ Error creating draw entry for ${user.first_name}:`, entryError)
@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
         for (const winner of matchWinners) {
           try {
             const { error: winnerError } = await (supabaseAdmin
-              .from('winners')
+              .from('winners') as any)
               .insert({
                 user_id: winner.userId,
                 draw_id: draw.id,
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
                 prize_amount: prizePerWinner,
                 verification_status: 'pending',
                 payment_status: 'pending'
-              }) as any)
+              })
 
             if (winnerError) {
               console.error('Error creating winner record:', winnerError)
@@ -234,9 +234,9 @@ export async function POST(request: NextRequest) {
     // If no 5-match winners, update jackpot rollover
     if (!winnersByMatch[5] || winnersByMatch[5].length === 0) {
       await (supabaseAdmin
-        .from('draws')
+        .from('draws') as any)
         .update({ jackpot_rollover: drawResult.fiveMatchPool })
-        .eq('id', draw.id) as any)
+        .eq('id', draw.id)
     }
 
     return NextResponse.json({

@@ -17,8 +17,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const { firstName, lastName, subscriptionPlan, subscriptionStatus } = await request.json()
 
     // Update user
-    const { data: updatedUser, error } = await supabaseAdmin
-      .from('users')
+    const { data: updatedUser, error } = await (supabaseAdmin
+      .from('users') as any)
       .update({
         first_name: firstName,
         last_name: lastName,
@@ -55,8 +55,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     // Delete user (this will cascade delete related records)
-    const { error } = await supabaseAdmin
-      .from('users')
+    const { error } = await (supabaseAdmin
+      .from('users') as any)
       .delete()
       .eq('id', params.id)
 

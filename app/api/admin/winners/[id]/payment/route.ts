@@ -17,8 +17,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const { paymentStatus, paymentMethod, transactionId } = await request.json()
 
     // Update winner payment status
-    const { data: updatedWinner, error } = await supabaseAdmin
-      .from('winners')
+    const { data: updatedWinner, error } = await (supabaseAdmin
+      .from('winners') as any)
       .update({
         payment_status: paymentStatus,
         payment_method: paymentMethod,

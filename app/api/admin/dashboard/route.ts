@@ -15,25 +15,25 @@ export async function GET(request: NextRequest) {
     }
 
     // Get total users
-    const { count: totalUsers } = await supabaseAdmin
-      .from('users')
+    const { count: totalUsers } = await (supabaseAdmin
+      .from('users') as any)
       .select('*', { count: 'exact', head: true })
 
     // Get active subscribers
-    const { count: activeSubscribers } = await supabaseAdmin
-      .from('users')
+    const { count: activeSubscribers } = await (supabaseAdmin
+      .from('users') as any)
       .select('*', { count: 'exact', head: true })
       .eq('subscription_status', 'active')
 
     // Calculate total prize pool
-    const { data: activeUsersData } = await supabaseAdmin
-      .from('users')
+    const { data: activeUsersData } = await (supabaseAdmin
+      .from('users') as any)
       .select('subscription_plan')
       .eq('subscription_status', 'active')
 
     let totalPrizePool = 0
     if (activeUsersData) {
-      activeUsersData.forEach(user => {
+      (activeUsersData as any[]).forEach(user => {
         if (user.subscription_plan === 'monthly') {
           totalPrizePool += 29.99 * 0.6 // 60% goes to prize pool
         } else if (user.subscription_plan === 'yearly') {
@@ -46,28 +46,28 @@ export async function GET(request: NextRequest) {
     const totalCharityContributions = 0 // Skip for now to avoid timeout
 
     // Get pending winners count - SIMPLIFIED
-    const { count: pendingWinners } = await supabaseAdmin
-      .from('winners')
+    const { count: pendingWinners } = await (supabaseAdmin
+      .from('winners') as any)
       .select('*', { count: 'exact', head: true })
       .eq('verification_status', 'pending')
 
     // Get all users for management - SIMPLIFIED
-    const { data: users } = await supabaseAdmin
-      .from('users')
+    const { data: users } = await (supabaseAdmin
+      .from('users') as any)
       .select('id, email, first_name, last_name, subscription_status, subscription_plan, created_at')
       .order('created_at', { ascending: false })
       .limit(20)
 
     // Get recent draws - SIMPLIFIED
-    const { data: draws } = await supabaseAdmin
-      .from('draws')
+    const { data: draws } = await (supabaseAdmin
+      .from('draws') as any)
       .select('id, draw_date, draw_type, winning_numbers, is_published, created_at')
       .order('created_at', { ascending: false })
       .limit(5)
 
     // Get winners needing verification - SIMPLIFIED
-    const { data: winners } = await supabaseAdmin
-      .from('winners')
+    const { data: winners } = await (supabaseAdmin
+      .from('winners') as any)
       .select(`
         id,
         match_type,
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
       .limit(10)
 
-    const winnersWithNames = winners?.map(winner => ({
+    const winnersWithNames = (winners as any[])?.map(winner => ({
       ...winner,
       userName: `${winner.users.first_name} ${winner.users.last_name}`
     })) || []
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
         pendingWinners: pendingWinners || 0,
         nextDrawDate: nextDrawDate.toISOString()
       },
-      users: users?.map(user => ({
+      users: (users as any[])?.map(user => ({
         id: user.id,
         email: user.email,
         firstName: user.first_name,

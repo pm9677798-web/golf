@@ -36,8 +36,8 @@ export async function POST(request: NextRequest) {
     // Create test draw record with proper error handling
     let draw
     try {
-      const insertResult = await supabaseAdmin
-        .from('draws')
+      const insertResult = await (supabaseAdmin
+        .from('draws') as any)
         .insert({
           draw_date: new Date().toISOString().split('T')[0],
           draw_type: 'random',
