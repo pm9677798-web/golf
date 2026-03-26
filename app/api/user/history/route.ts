@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user's draw participation history
-    const { data: drawEntries } = await supabaseAdmin
-      .from('draw_entries')
+    const { data: drawEntries } = await (supabaseAdmin
+      .from('draw_entries') as any)
       .select(`
         *,
         draws (
@@ -32,15 +32,15 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     // Get user's complete score history
-    const { data: allScores } = await supabaseAdmin
-      .from('golf_scores')
+    const { data: allScores } = await (supabaseAdmin
+      .from('golf_scores') as any)
       .select('*')
       .eq('user_id', user.id)
       .order('score_date', { ascending: false })
 
     // Get user's winnings history
-    const { data: winningsHistory } = await supabaseAdmin
-      .from('winners')
+    const { data: winningsHistory } = await (supabaseAdmin
+      .from('winners') as any)
       .select(`
         *,
         draws (
@@ -54,14 +54,14 @@ export async function GET(request: NextRequest) {
 
     // Calculate statistics
     const totalDrawsParticipated = drawEntries?.length || 0
-    const totalWinnings = winningsHistory?.reduce((sum, win) => sum + parseFloat(win.prize_amount.toString()), 0) || 0
+    const totalWinnings = (winningsHistory as any[])?.reduce((sum, win) => sum + parseFloat(win.prize_amount.toString()), 0) || 0
     const totalScoresEntered = allScores?.length || 0
-    const averageScore = allScores?.length > 0 
-      ? allScores.reduce((sum, score) => sum + score.score, 0) / allScores.length 
+    const averageScore = (allScores as any[])?.length > 0 
+      ? (allScores as any[]).reduce((sum, score) => sum + score.score, 0) / (allScores as any[]).length 
       : 0
 
     return NextResponse.json({
-      drawEntries: drawEntries?.map(entry => ({
+      drawEntries: (drawEntries as any[])?.map(entry => ({
         id: entry.id,
         drawId: entry.draw_id,
         userNumbers: entry.user_numbers,
@@ -77,13 +77,13 @@ export async function GET(request: NextRequest) {
           totalPrizePool: entry.draws.total_prize_pool
         }
       })) || [],
-      allScores: allScores?.map(score => ({
+      allScores: (allScores as any[])?.map(score => ({
         id: score.id,
         score: score.score,
         scoreDate: score.score_date,
         createdAt: score.created_at
       })) || [],
-      winningsHistory: winningsHistory?.map(win => ({
+      winningsHistory: (winningsHistory as any[])?.map(win => ({
         id: win.id,
         matchType: win.match_type,
         prizeAmount: win.prize_amount,

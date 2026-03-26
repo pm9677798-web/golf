@@ -15,16 +15,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user's latest 5 scores
-    const { data: scores } = await supabaseAdmin
-      .from('golf_scores')
+    const { data: scores } = await (supabaseAdmin
+      .from('golf_scores') as any)
       .select('*')
       .eq('user_id', user.id)
       .order('score_date', { ascending: false })
       .limit(5)
 
     // Get upcoming draw
-    const { data: upcomingDraw } = await supabaseAdmin
-      .from('draws')
+    const { data: upcomingDraw } = await (supabaseAdmin
+      .from('draws') as any)
       .select('*')
       .eq('is_published', false)
       .order('draw_date', { ascending: true })
@@ -32,15 +32,15 @@ export async function GET(request: NextRequest) {
       .single()
 
     // Get user's winnings
-    const { data: winnings } = await supabaseAdmin
-      .from('winners')
+    const { data: winnings } = await (supabaseAdmin
+      .from('winners') as any)
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     // Get selected charity info
-    const { data: charity } = await supabaseAdmin
-      .from('charities')
+    const { data: charity } = await (supabaseAdmin
+      .from('charities') as any)
       .select('*')
       .eq('id', user.selected_charity_id)
       .single()

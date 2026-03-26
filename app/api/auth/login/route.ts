@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Find user by email
-    const { data: user, error } = await supabaseAdmin
-      .from('users')
+    const { data: user, error } = await (supabaseAdmin
+      .from('users') as any)
       .select('*')
       .eq('email', email)
       .single()
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 })
     }
 
-    const userRow = user as UserRow
+    const userRow = user as any
 
     // Verify password
     const isValidPassword = await verifyPassword(password, userRow.password_hash)
@@ -36,9 +36,9 @@ export async function POST(request: NextRequest) {
     // Check subscription status
     if (userRow.subscription_end_date && new Date(userRow.subscription_end_date) < new Date()) {
       const { error: updateError } = await (supabaseAdmin
-        .from('users')
+        .from('users') as any)
         .update({ subscription_status: 'inactive' })
-        .eq('id', userRow.id) as any)
+        .eq('id', userRow.id)
       
       if (!updateError) {
         userRow.subscription_status = 'inactive'
