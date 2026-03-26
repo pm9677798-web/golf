@@ -11,8 +11,8 @@ export interface DrawResult {
 
 export async function calculatePrizePool(): Promise<number> {
   // Get all active subscribers
-  const { data: activeUsers } = await supabaseAdmin
-    .from('users')
+  const { data: activeUsers } = await (supabaseAdmin
+    .from('users') as any)
     .select('subscription_plan, charity_contribution_percentage')
     .eq('subscription_status', 'active')
 
@@ -57,8 +57,8 @@ export async function generateSmartNumbers(): Promise<number[]> {
   console.log('🎯 Starting Smart Number Generation...')
   
   // Get all eligible users (active with 5+ scores)
-  const { data: eligibleUsers } = await supabaseAdmin
-    .from('users')
+  const { data: eligibleUsers } = await (supabaseAdmin
+    .from('users') as any)
     .select('id, first_name, email')
     .eq('subscription_status', 'active')
 
@@ -73,8 +73,8 @@ export async function generateSmartNumbers(): Promise<number[]> {
   const userScoreSets: { userId: string, userName: string, scores: number[] }[] = []
   
   for (const user of eligibleUsers) {
-    const { data: userScores } = await supabaseAdmin
-      .from('golf_scores')
+    const { data: userScores } = await (supabaseAdmin
+      .from('golf_scores') as any)
       .select('score')
       .eq('user_id', user.id)
       .order('score_date', { ascending: false })
@@ -185,8 +185,8 @@ export async function generateSmartNumbers(): Promise<number[]> {
 
 export async function generateAlgorithmicNumbers(): Promise<number[]> {
   // Get all user scores from eligible users (those with 5+ scores)
-  const { data: eligibleUsers } = await supabaseAdmin
-    .from('users')
+  const { data: eligibleUsers } = await (supabaseAdmin
+    .from('users') as any)
     .select('id')
     .eq('subscription_status', 'active')
 
@@ -198,8 +198,8 @@ export async function generateAlgorithmicNumbers(): Promise<number[]> {
   const allUserScores: number[] = []
   
   for (const user of eligibleUsers) {
-    const { data: userScores } = await supabaseAdmin
-      .from('golf_scores')
+    const { data: userScores } = await (supabaseAdmin
+      .from('golf_scores') as any)
       .select('score')
       .eq('user_id', user.id)
       .order('score_date', { ascending: false })
@@ -279,8 +279,8 @@ export async function runDraw(type: 'random' | 'algorithmic' | 'smart'): Promise
   const totalPrizePool = await calculatePrizePool()
   
   // Get previous jackpot rollover
-  const { data: lastDraw } = await supabaseAdmin
-    .from('draws')
+  const { data: lastDraw } = await (supabaseAdmin
+    .from('draws') as any)
     .select('jackpot_rollover')
     .order('created_at', { ascending: false })
     .limit(1)
@@ -327,8 +327,8 @@ export function calculateMatches(userNumbers: number[], winningNumbers: number[]
 export async function processDrawResults(drawId: string, winningNumbers: number[]) {
   try {
     // Get all active users
-    const { data: users, error: usersError } = await supabaseAdmin
-      .from('users')
+    const { data: users, error: usersError } = await (supabaseAdmin
+      .from('users') as any)
       .select('id, email, first_name, last_name')
       .eq('subscription_status', 'active')
 
@@ -341,8 +341,8 @@ export async function processDrawResults(drawId: string, winningNumbers: number[
 
     for (const user of users) {
       // Get user's latest 5 scores
-      const { data: userScores, error: scoresError } = await supabaseAdmin
-        .from('golf_scores')
+      const { data: userScores, error: scoresError } = await (supabaseAdmin
+        .from('golf_scores') as any)
         .select('score, score_date')
         .eq('user_id', user.id)
         .order('score_date', { ascending: false })
@@ -358,7 +358,7 @@ export async function processDrawResults(drawId: string, winningNumbers: number[
       if (matches >= 3) {
         // Create draw entry
         const { data: entryData, error: entryError } = await (supabaseAdmin
-          .from('draw_entries')
+          .from('draw_entries') as any)
           .insert({
             user_id: user.id,
             draw_id: drawId,
@@ -366,7 +366,7 @@ export async function processDrawResults(drawId: string, winningNumbers: number[
             matches,
           })
           .select('id')
-          .single() as any)
+          .single()
 
         if (!entryError && entryData) {
           winners.push({

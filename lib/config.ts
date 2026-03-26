@@ -13,8 +13,8 @@ export async function getSystemConfig(key: string): Promise<string | null> {
   }
 
   try {
-    const { data, error } = await supabaseAdmin
-      .from('system_config')
+    const { data, error } = await (supabaseAdmin
+      .from('system_config') as any)
       .select('config_value')
       .eq('config_key', key)
       .single()
@@ -42,8 +42,8 @@ export async function getSystemConfigNumber(key: string, defaultValue: number = 
 
 export async function isUserAdmin(userId: string): Promise<boolean> {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('admin_users')
+    const { data, error } = await (supabaseAdmin
+      .from('admin_users') as any)
       .select('id')
       .eq('user_id', userId)
       .single()
