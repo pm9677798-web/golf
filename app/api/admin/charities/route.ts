@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all charities - SIMPLIFIED to avoid timeout
-    const { data: charities, error } = await supabaseAdmin
-      .from('charities')
+    const { data: charities, error } = await (supabaseAdmin
+      .from('charities') as any)
       .select('id, name, description, website_url, is_featured, created_at')
       .order('name', { ascending: true })
 

@@ -34,8 +34,8 @@ export async function getUserFromToken(token: string): Promise<any> {
   const payload = verifyToken(token)
   if (!payload) return null
 
-  const { data: user } = await supabaseAdmin
-    .from('users')
+  const { data: user } = await (supabaseAdmin
+    .from('users') as any)
     .select('*')
     .eq('id', payload.userId)
     .single()
@@ -44,8 +44,8 @@ export async function getUserFromToken(token: string): Promise<any> {
 }
 
 export async function checkSubscriptionStatus(userId: string): Promise<boolean> {
-  const { data: user } = await supabaseAdmin
-    .from('users')
+  const { data: user } = await (supabaseAdmin
+    .from('users') as any)
     .select('subscription_status, subscription_end_date')
     .eq('id', userId)
     .single()
@@ -56,8 +56,8 @@ export async function checkSubscriptionStatus(userId: string): Promise<boolean> 
 
   if (user.subscription_end_date && new Date(user.subscription_end_date) < new Date()) {
     // Update expired subscription
-    await supabaseAdmin
-      .from('users')
+    await (supabaseAdmin
+      .from('users') as any)
       .update({ subscription_status: 'inactive' })
       .eq('id', userId)
     return false

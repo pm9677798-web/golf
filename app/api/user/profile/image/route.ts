@@ -46,25 +46,25 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
 
     // Delete old profile image if exists
-    const { data: currentUser } = await supabaseAdmin
-      .from('users')
+    const { data: currentUser } = await (supabaseAdmin
+      .from('users') as any)
       .select('profile_image_url')
       .eq('id', user.id)
       .single()
 
     if (currentUser?.profile_image_url) {
       // Extract filename from URL and delete from storage
-      const oldFileName = currentUser.profile_image_url.split('/').pop()
+      const oldFileName = (currentUser as any).profile_image_url.split('/').pop()
       if (oldFileName) {
-        await supabaseAdmin.storage
-          .from('profile-images')
+        await (supabaseAdmin.storage
+          .from('profile-images') as any)
           .remove([`${user.id}/${oldFileName}`])
       }
     }
 
     // Upload new image to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
-      .from('profile-images')
+    const { data: uploadData, error: uploadError } = await (supabaseAdmin.storage
+      .from('profile-images') as any)
       .upload(fileName, buffer, {
         contentType: file.type,
         upsert: true
@@ -76,15 +76,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Get public URL
-    const { data: urlData } = supabaseAdmin.storage
-      .from('profile-images')
+    const { data: urlData } = (supabaseAdmin.storage
+      .from('profile-images') as any)
       .getPublicUrl(fileName)
 
     const imageUrl = urlData.publicUrl
 
     // Update user profile with new image URL
-    const { error: updateError } = await supabaseAdmin
-      .from('users')
+    const { error: updateError } = await (supabaseAdmin
+      .from('users') as any)
       .update({ 
         profile_image_url: imageUrl,
         updated_at: new Date().toISOString()
@@ -120,8 +120,8 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Get current profile image
-    const { data: currentUser } = await supabaseAdmin
-      .from('users')
+    const { data: currentUser } = await (supabaseAdmin
+      .from('users') as any)
       .select('profile_image_url')
       .eq('id', user.id)
       .single()
@@ -131,10 +131,10 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Extract filename from URL and delete from storage
-    const fileName = currentUser.profile_image_url.split('/').slice(-2).join('/')
+    const fileName = (currentUser as any).profile_image_url.split('/').slice(-2).join('/')
     
-    const { error: deleteError } = await supabaseAdmin.storage
-      .from('profile-images')
+    const { error: deleteError } = await (supabaseAdmin.storage
+      .from('profile-images') as any)
       .remove([fileName])
 
     if (deleteError) {
@@ -142,8 +142,8 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Remove image URL from user profile
-    const { error: updateError } = await supabaseAdmin
-      .from('users')
+    const { error: updateError } = await (supabaseAdmin
+      .from('users') as any)
       .update({ 
         profile_image_url: null,
         updated_at: new Date().toISOString()

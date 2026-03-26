@@ -4,8 +4,8 @@ import { supabaseAdmin } from '../../../lib/supabase'
 export async function GET(request: NextRequest) {
   try {
     // Get all charities from database
-    const { data: charities, error } = await supabaseAdmin
-      .from('charities')
+    const { data: charities, error } = await (supabaseAdmin
+      .from('charities') as any)
       .select('*')
       .order('is_featured', { ascending: false })
       .order('name', { ascending: true })
